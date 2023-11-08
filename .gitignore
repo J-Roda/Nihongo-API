@@ -1,0 +1,4 @@
+node_modules
+.prettierrc.cjs
+.env
+data.json
