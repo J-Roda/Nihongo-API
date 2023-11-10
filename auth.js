@@ -8,10 +8,11 @@ const createToken = (user) => {
     const data = {
         id: user._id,
         email: user.email,
+        role: user.role,
         // isAdmin: user.isAdmin,
     };
     // Generate a JSON web token using the jwt's sign method
-    return jwt.sign(data, secret, { expiresIn: "3d" });
+    return jwt.sign(data, secret, { expiresIn: "1d" });
 };
 
 const verify = (req, res, next) => {

@@ -5,49 +5,10 @@ const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
 const userSchema = Schema({
-    // firstName: {
-    //     type: String,
-    //     // required: true,
-    // },
-    // lastName: {
-    //     type: String,
-    //     // required: true,
-    // },
-    // cellNumber: {
-    //     type: String,
-    //     // required: true,
-    // },
-    // gender: {
-    //     type: String,
-    //     // required: true,
-    // },
-    // address: [
-    //     {
-    //         street: {
-    //             type: String,
-    //             // required: true,
-    //         },
-    //         barangay: {
-    //             type: String,
-    //             // required: true,
-    //         },
-    //         municipality: {
-    //             type: String,
-    //             // required: true,
-    //         },
-    //         province: {
-    //             type: String,
-    //             // required: true,
-    //         },
-    //         region: {
-    //             type: String,
-    //             // required: true,
-    //         },
-    //     },
-    // ],
     username: {
         type: String,
         required: true,
+        unique: true,
     },
     email: {
         type: String,
@@ -65,37 +26,9 @@ const userSchema = Schema({
 });
 
 userSchema.statics.signup = async function (...data) {
-    const [
-        // firstName,
-        // lastName,
-        // cellNumber,
-        // gender,
-        // street,
-        // barangay,
-        // municipality,
-        // province,
-        // region,
-        username,
-        email,
-        password,
-        confirmPassword,
-    ] = data;
+    const [username, email, password, confirmPassword] = data;
 
-    if (
-        // !firstName ||
-        //  !lastName ||
-        //  !cellNumber ||
-        //  !gender ||
-        //  !street ||
-        //  !barangay ||
-        //  !municipality ||
-        //  !province ||
-        //  !region ||
-        !username ||
-        !email ||
-        !password ||
-        !confirmPassword
-    ) {
+    if (!username || !email || !password || !confirmPassword) {
         throw Error("All fields must be filled");
     }
 
@@ -125,19 +58,6 @@ userSchema.statics.signup = async function (...data) {
     const hash = await bcrypt.hash(password, 10);
 
     const user = await this.create({
-        // firstName,
-        // lastName,
-        // cellNumber,
-        // gender,
-        // address: [
-        //     {
-        //         street,
-        //         barangay,
-        //         municipality,
-        //         province,
-        //         region,
-        //     },
-        // ],
         username,
         email,
         password: hash,
