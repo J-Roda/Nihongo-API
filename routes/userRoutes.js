@@ -10,10 +10,10 @@ const {
 
 const { verify } = require("../auth");
 
-// User register
+// User login
 router.post("/login", login);
 
-// User login
+// User register
 router.post("/signup", signupUser);
 
 // Show User Profile

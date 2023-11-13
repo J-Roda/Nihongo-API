@@ -7,6 +7,7 @@ const cors = require("cors");
 const app = express();
 const userRoutes = require("./routes/userRoutes");
 const questionRoutes = require("./routes/questionRoutes");
+const alphabetRoutes = require("./routes/alphabetRoutes");
 
 // Middleware
 app.use(cors());
@@ -15,13 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/users", userRoutes);
 app.use("/api/questions", questionRoutes);
+app.use("/api/alphabet", alphabetRoutes);
 
 mongoose.set({ strictQuery: true });
 mongoose
-    .connect(
-        process.env.MONGODB_URL
-        // 'mongodb://localhost:27017/capstone2'
-    )
+    .connect(process.env.MONGODB_URL)
     .then(() => {
         app.listen(
             process.env.PORT || 3000,

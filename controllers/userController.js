@@ -1,6 +1,4 @@
 const User = require("../models/User");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 
 const { createToken, decode } = require("../auth");
 
@@ -58,7 +56,8 @@ const login = async (req, res) => {
         const token = createToken(user);
         res.status(200).json(token);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        if (error.message === "")
+            res.status(400).json({ error: error.message });
     }
 };
 
