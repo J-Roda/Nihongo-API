@@ -1,41 +1,12 @@
 const User = require("../models/User");
 
 const { createToken, decode } = require("../auth");
+const { default: mongoose } = require("mongoose");
 
 // User register
 const signupUser = async (req, res) => {
-    const {
-        // firstName,
-        // lastName,
-        // cellNumber,
-        // gender,
-        // street,
-        // barangay,
-        // municipality,
-        // province,
-        // region,
-        username,
-        email,
-        password,
-        confirmPassword,
-    } = req.body;
-
     try {
-        const user = await User.signup(
-            //   firstName,
-            //   lastName,
-            //   cellNumber,
-            //   gender,
-            //   street,
-            //   barangay,
-            //   municipality,
-            //   province,
-            //   region,
-            username,
-            email,
-            password,
-            confirmPassword
-        );
+        const user = await User.signup(req.body);
 
         // create token
         const token = createToken(user);
@@ -52,17 +23,21 @@ const login = async (req, res) => {
 
     try {
         const user = await User.login(email, password);
+
         // create token
         const token = createToken(user);
         res.status(200).json(token);
     } catch (error) {
-        if (error.message === "")
-            res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
 
+// get user profile
 const getUserProfile = async (req, res) => {
+    // get the token
     const token = req.headers.authorization;
+
+    // decode the token to know who has been logged in
     const userData = decode(token);
 
     try {
@@ -77,8 +52,39 @@ const getUserProfile = async (req, res) => {
     }
 };
 
+const removeUser = async (req, res) => {
+    const token = req.headers.authorization;
+    const userData = decode(token);
+
+    const { userId } = req.body;
+
+    // Validate if user ID inputted is same as mongoDB format
+    if (!mongoose.Types.ObjectId.isValid(userId))
+        return res.status(400).json({ error: "user id invalid" });
+
+    console.log(userData);
+    try {
+        if (userData.role !== "admin")
+            return res
+                .status(401)
+                .json({ error: "Access Denied!, Admin users only!" });
+
+        const user = await User.findById(userId);
+
+        if (!user)
+            return res.status(404).json({ error: "User does not exist" });
+
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        res.status(200).json(deletedUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 module.exports = {
     signupUser,
     login,
     getUserProfile,
+    removeUser,
 };

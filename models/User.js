@@ -25,8 +25,19 @@ const userSchema = Schema({
     },
 });
 
-userSchema.statics.signup = async function (...data) {
-    const [username, email, password, confirmPassword] = data;
+userSchema.statics.signup = async function (data) {
+    // Lower case inputted data, default value of arr is [], k are the keys of object
+    let lowerCaseData = Object.keys(data).reduce(
+        (arr, k) => (
+            k !== "password" && k !== "confirmPassword"
+                ? (arr[k] = data[k].toLowerCase())
+                : (arr[k] = data[k]),
+            arr
+        ),
+        {}
+    );
+
+    const { username, email, password, confirmPassword } = lowerCaseData;
 
     // Check if all fields has been filled
     if (!username || !email || !password || !confirmPassword) {
@@ -51,6 +62,7 @@ userSchema.statics.signup = async function (...data) {
     // Check if usernameExist already
     const usernameExist = await this.findOne({ username });
 
+    console.log(usernameExist);
     if (usernameExist) {
         throw Error("Sorry!, Username already in use");
     }
@@ -76,6 +88,10 @@ userSchema.statics.signup = async function (...data) {
 };
 
 userSchema.statics.login = async function (email, password) {
+    // console.log(email);
+    // email = email.toLowerCase();
+    // console.log(email);
+
     // Check if email and password is entered
     if (!email || !password) {
         throw Error("All fields must be filled");
