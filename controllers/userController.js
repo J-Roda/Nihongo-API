@@ -43,7 +43,7 @@ const getAllUsers = async (req, res) => {
         if (userData.role !== "admin")
             return res.status(401).json({ error: "Admin users only!" });
 
-        const users = await User.find();
+        const users = await User.find({ role: { $in: ["student", "sensei"] } });
 
         res.status(200).json(users);
     } catch (error) {
