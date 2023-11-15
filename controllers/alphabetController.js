@@ -4,7 +4,7 @@ const getAllHiragana = async (req, res) => {
     try {
         const allHiragana = await Alphabet.find().select("hiragana romaji");
 
-        if (allHiragana.length === 0)
+        if (allHiragana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
@@ -19,7 +19,7 @@ const getAllKatakana = async (req, res) => {
     try {
         const allKatakana = await Alphabet.find().select("katakana romaji");
 
-        if (allKatakana.length === 0)
+        if (allKatakana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
@@ -36,7 +36,7 @@ const getMainHiragana = async (req, res) => {
             "hiragana romaji"
         );
 
-        if (mainHiragana.length === 0)
+        if (mainHiragana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
@@ -53,7 +53,7 @@ const getMainkatakana = async (req, res) => {
             "katakana romaji"
         );
 
-        if (mainKatakana.length === 0)
+        if (mainKatakana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
@@ -70,7 +70,7 @@ const getDakutenHiragana = async (req, res) => {
             "hiragana romaji"
         );
 
-        if (dakutenHiragana.length === 0)
+        if (dakutenHiragana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
@@ -87,7 +87,7 @@ const getDakutenKatakana = async (req, res) => {
             "katakana romaji"
         );
 
-        if (dakutenKatakana.length === 0)
+        if (dakutenKatakana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
@@ -104,7 +104,7 @@ const getCombinationHiragana = async (req, res) => {
             mode: "combination",
         }).select("hiragana romaji");
 
-        if (combinationHiragana.length === 0)
+        if (combinationHiragana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
@@ -121,7 +121,7 @@ const getCombinationKatakana = async (req, res) => {
             mode: "combination",
         }).select("katakana romaji");
 
-        if (combinationKatakana.length === 0)
+        if (combinationKatakana.length < 1)
             return res
                 .status(404)
                 .json({ error: "No such type of alphabet exist!" });
