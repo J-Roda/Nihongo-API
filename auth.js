@@ -17,7 +17,6 @@ const createToken = (user) => {
 
 const verify = (req, res, next) => {
     let token = req.headers.authorization;
-
     try {
         // Validate the "token" using verify method, to decrypt the token using the secret code.
 

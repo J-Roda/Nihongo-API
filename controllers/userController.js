@@ -1,7 +1,7 @@
 const User = require("../models/User");
-
 const { createToken, decode } = require("../auth");
-const { default: mongoose } = require("mongoose");
+const validator = require("validator");
+const { mongoose } = require("mongoose");
 
 // User register
 const signupUser = async (req, res) => {
@@ -46,6 +46,27 @@ const getAllUsers = async (req, res) => {
         const users = await User.find({ role: { $in: ["student", "sensei"] } });
 
         res.status(200).json(users);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const getUserByEmail = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        if (!email) throw Error("email is empty");
+        if (!validator.isEmail(email) || !email.includes("@awsys-i.com"))
+            return res
+                .status(400)
+                .json({ error: `${email} Email is Invalid!` });
+
+        const user = await User.find({ email });
+
+        if (user.length < 1)
+            return res.status(404).json({ error: "User does not exist!" });
+
+        res.status(200).json(user[0]);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -106,6 +127,7 @@ module.exports = {
     signupUser,
     login,
     getAllUsers,
+    getUserByEmail,
     getUserProfile,
     deleteUser,
 };

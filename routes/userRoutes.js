@@ -8,6 +8,7 @@ const {
     getUserProfile,
     deleteUser,
     getAllUsers,
+    getUserByEmail,
 } = require("../controllers/userController");
 
 const { verify } = require("../auth");
@@ -23,6 +24,9 @@ router.get("/all", verify, getAllUsers);
 
 // Show User Profile
 router.get("/profile", verify, getUserProfile);
+
+// Get user by email
+router.get("/get-by-email", verify, getUserByEmail);
 
 // delete user
 router.delete("/delete", verify, deleteUser);
