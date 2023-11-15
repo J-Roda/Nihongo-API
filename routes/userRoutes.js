@@ -24,6 +24,7 @@ router.get("/all", verify, getAllUsers);
 // Show User Profile
 router.get("/profile", verify, getUserProfile);
 
+// delete user
 router.delete("/delete", verify, deleteUser);
 
 module.exports = router;

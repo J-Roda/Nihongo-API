@@ -76,12 +76,13 @@ const deleteUser = async (req, res) => {
     const userData = decode(token);
 
     const { userId } = req.body;
-
+    console.log(userId);
     // Validate if user ID inputted is same as mongoDB format
     if (!mongoose.Types.ObjectId.isValid(userId))
-        return res.status(400).json({ error: "user id invalid" });
+        return res
+            .status(400)
+            .json({ error: `User ID '${userId}' is Invalid!` });
 
-    console.log(userData);
     try {
         if (userData.role !== "admin")
             return res
