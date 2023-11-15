@@ -32,6 +32,25 @@ const login = async (req, res) => {
     }
 };
 
+const getAllUsers = async (req, res) => {
+    // get the token
+    const token = req.headers.authorization;
+
+    // decode the token to know who has been logged in
+    const userData = decode(token);
+
+    try {
+        if (userData.role !== "admin")
+            return res.status(401).json({ error: "Admin users only!" });
+
+        const users = await User.find();
+
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 // get user profile
 const getUserProfile = async (req, res) => {
     // get the token
@@ -52,7 +71,7 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-const removeUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     const token = req.headers.authorization;
     const userData = decode(token);
 
@@ -85,6 +104,7 @@ const removeUser = async (req, res) => {
 module.exports = {
     signupUser,
     login,
+    getAllUsers,
     getUserProfile,
-    removeUser,
+    deleteUser,
 };

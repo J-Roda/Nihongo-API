@@ -6,7 +6,8 @@ const {
     login,
     signupUser,
     getUserProfile,
-    removeUser,
+    deleteUser,
+    getAllUsers,
 } = require("../controllers/userController");
 
 const { verify } = require("../auth");
@@ -17,9 +18,12 @@ router.post("/login", login);
 // User register
 router.post("/signup", signupUser);
 
+// Get all users
+router.get("/all", verify, getAllUsers);
+
 // Show User Profile
 router.get("/profile", verify, getUserProfile);
 
-router.delete("/delete", verify, removeUser);
+router.delete("/delete", verify, deleteUser);
 
 module.exports = router;
