@@ -26,7 +26,7 @@ router.get("/all", verify, getAllUsers);
 router.get("/profile", verify, getUserProfile);
 
 // Get user by email
-router.get("/get-by-email", verify, getUserByEmail);
+router.post("/get-by-email", verify, getUserByEmail);
 
 // delete user
 router.delete("/delete", verify, deleteUser);
