@@ -7,6 +7,7 @@ const {
     getQuestions,
     getAllQuestions,
     getQuestionBySetType,
+    getQuestionByLevelTypeSet,
 } = require("../controllers/questionsController");
 
 // get all questions
@@ -19,5 +20,8 @@ router.post("/create", createManyQuestions);
 
 // get questions depending on type and level
 router.get("/type=:type&level=:level", getQuestions);
+
+// get questions by level, type, and set
+router.get("/n:level-:type-exercise-:set", getQuestionByLevelTypeSet);
 
 module.exports = router;
