@@ -3,20 +3,20 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    createManyQuestions,
+    createQuestions,
     getQuestions,
     getAllQuestions,
-    getQuestionBySetType,
+    getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
 } = require("../controllers/questionsController");
 
 // get all questions
 router.get("/all", getAllQuestions);
 
-router.get("/type-set", getQuestionBySetType);
+router.get("/count-type-level", getQuestionCountByTypeLevel);
 
 // create single or many questions
-router.post("/create", createManyQuestions);
+router.post("/create", createQuestions);
 
 // get questions depending on type and level
 router.get("/type=:type&level=:level", getQuestions);

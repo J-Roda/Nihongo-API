@@ -43,7 +43,10 @@ const getAllUsers = async (req, res) => {
         if (userData.role !== "admin")
             return res.status(401).json({ error: "Admin users only!" });
 
-        const users = await User.find({ role: { $in: ["student", "sensei"] } });
+        const users = await User.find(
+            { role: { $in: ["student", "sensei"] } },
+            { __v: 0 }
+        );
 
         res.status(200).json(users);
     } catch (error) {
@@ -81,7 +84,10 @@ const getUserProfile = async (req, res) => {
     const userData = decode(token);
 
     try {
-        const user = await User.findById(userData.id, { password: false });
+        const user = await User.findById(userData.id, {
+            password: false,
+            __v: 0,
+        });
 
         if (!user)
             return res.status(404).json({ error: "No such user exist!" });

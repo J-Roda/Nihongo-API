@@ -29,14 +29,50 @@ const getQuestions = async (req, res) => {
     }
 };
 
-// get questions by set and type
-const getQuestionBySetType = async (req, res) => {
+// get questions by set, type, and level
+const getQuestionCountByTypeLevel = async (req, res) => {
     try {
         const questions = await Questions.aggregate([
             {
-                $group: { typeSet: { type: "$type", set: "$set" } },
+                $match: {
+                    $or: [
+                        { type: "vocab", level: "5" },
+                        { type: "vocab", level: "4" },
+                        { type: "vocab", level: "3" },
+                        { type: "vocab", level: "2" },
+                        { type: "vocab", level: "1" },
+                        { type: "grammar", level: "5" },
+                        { type: "grammar", level: "4" },
+                        { type: "grammar", level: "3" },
+                        { type: "grammar", level: "2" },
+                        { type: "grammar", level: "1" },
+                        { type: "kanji", level: "5" },
+                        { type: "kanji", level: "4" },
+                        { type: "kanji", level: "3" },
+                        { type: "kanji", level: "2" },
+                        { type: "kanji", level: "1" },
+                    ],
+                },
             },
-            { $sort: { set: -1 } },
+            {
+                $group: {
+                    _id: {
+                        type: "$type",
+                        level: "$level",
+                        set: "$set",
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        type: "$_id.type",
+                        level: "$_id.level",
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { "_id.level": -1, "_id.type": 1 } },
         ]);
         if (questions.length < 1)
             return res.status(404).json({ error: "question not found" });
@@ -63,7 +99,7 @@ const getQuestionByLevelTypeSet = async (req, res) => {
 };
 
 // create single or many questions
-const createManyQuestions = async (req, res) => {
+const createQuestions = async (req, res) => {
     const questions = req.body;
     try {
         if (questions.length < 1) throw Error("No question inputted");
@@ -78,7 +114,7 @@ const createManyQuestions = async (req, res) => {
 module.exports = {
     getQuestions,
     getAllQuestions,
-    getQuestionBySetType,
+    getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
-    createManyQuestions,
+    createQuestions,
 };
