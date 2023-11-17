@@ -32,26 +32,10 @@ const getQuestions = async (req, res) => {
 // get questions by set, type, and level
 const getQuestionCountByTypeLevel = async (req, res) => {
     try {
-        const questions = await Questions.aggregate([
+        const vocabQuestions = await Questions.aggregate([
             {
                 $match: {
-                    $or: [
-                        { type: "vocab", level: "5" },
-                        { type: "vocab", level: "4" },
-                        { type: "vocab", level: "3" },
-                        { type: "vocab", level: "2" },
-                        { type: "vocab", level: "1" },
-                        { type: "grammar", level: "5" },
-                        { type: "grammar", level: "4" },
-                        { type: "grammar", level: "3" },
-                        { type: "grammar", level: "2" },
-                        { type: "grammar", level: "1" },
-                        { type: "kanji", level: "5" },
-                        { type: "kanji", level: "4" },
-                        { type: "kanji", level: "3" },
-                        { type: "kanji", level: "2" },
-                        { type: "kanji", level: "1" },
-                    ],
+                    type: "vocab",
                 },
             },
             {
@@ -63,21 +47,58 @@ const getQuestionCountByTypeLevel = async (req, res) => {
                     },
                 },
             },
+            { $sort: { _id: -1 } },
+        ]);
+        if (vocabQuestions.length < 1)
+            return res.status(404).json({ error: "vocab questions not found" });
+
+        const grammarQuestions = await Questions.aggregate([
+            {
+                $match: {
+                    type: "grammar",
+                },
+            },
             {
                 $group: {
                     _id: {
-                        type: "$_id.type",
-                        level: "$_id.level",
+                        type: "$type",
+                        level: "$level",
+                        set: "$set",
                     },
-                    count: { $sum: 1 },
                 },
             },
-            { $sort: { "_id.level": -1, "_id.type": 1 } },
+            { $sort: { _id: -1 } },
         ]);
-        if (questions.length < 1)
-            return res.status(404).json({ error: "question not found" });
+        if (grammarQuestions.length < 1)
+            return res
+                .status(404)
+                .json({ error: "grammar questions not found" });
 
-        res.status(200).json(questions);
+        const kanjiQuestions = await Questions.aggregate([
+            {
+                $match: {
+                    type: "kanji",
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        type: "$type",
+                        level: "$level",
+                        set: "$set",
+                    },
+                },
+            },
+            { $sort: { _id: -1 } },
+        ]);
+        if (kanjiQuestions.length < 1)
+            return res.status(404).json({ error: "kanji questions not found" });
+
+        res.status(200).json({
+            vocabQuestions,
+            grammarQuestions,
+            kanjiQuestions,
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
