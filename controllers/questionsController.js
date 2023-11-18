@@ -3,12 +3,29 @@ const Questions = require("../models/Questions");
 // get all questions
 const getAllQuestions = async (req, res) => {
     try {
-        const question = await Questions.find();
+        const vocabQuestions = await Questions.find({ type: "vocab" });
+        const grammarQuestions = await Questions.find({ type: "grammar" });
+        const kanjiQuestions = await Questions.find({ type: "kanji" });
 
-        if (question.length < 1)
-            return res.status(404).json({ error: "No such question exist!" });
+        if (vocabQuestions.length < 1)
+            return res
+                .status(404)
+                .json({ error: "No such vocab question exist!" });
 
-        res.status(200).json(question);
+        if (grammarQuestions.length < 1)
+            return res
+                .status(404)
+                .json({ error: "No such vocab question exist!" });
+        if (kanjiQuestions.length < 1)
+            return res
+                .status(404)
+                .json({ error: "No such vocab question exist!" });
+
+        res.status(200).json({
+            vocabQuestions,
+            grammarQuestions,
+            kanjiQuestions,
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -47,7 +64,7 @@ const getQuestionCountByTypeLevel = async (req, res) => {
                     },
                 },
             },
-            { $sort: { _id: -1 } },
+            { $sort: { _id: 1 } },
         ]);
         if (vocabQuestions.length < 1)
             return res.status(404).json({ error: "vocab questions not found" });
@@ -67,7 +84,7 @@ const getQuestionCountByTypeLevel = async (req, res) => {
                     },
                 },
             },
-            { $sort: { _id: -1 } },
+            { $sort: { _id: 1 } },
         ]);
         if (grammarQuestions.length < 1)
             return res
@@ -89,7 +106,7 @@ const getQuestionCountByTypeLevel = async (req, res) => {
                     },
                 },
             },
-            { $sort: { _id: -1 } },
+            { $sort: { _id: 1 } },
         ]);
         if (kanjiQuestions.length < 1)
             return res.status(404).json({ error: "kanji questions not found" });
