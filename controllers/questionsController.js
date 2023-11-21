@@ -130,6 +130,11 @@ const getQuestionByLevelTypeSet = async (req, res) => {
         if (questions.length < 1)
             return res.status(404).json({ error: "Question not found!" });
 
+        // randomize the questions
+        for (let i = questions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [questions[i], questions[j]] = [questions[j], questions[i]];
+        }
         res.status(200).json(questions);
     } catch (error) {
         res.status(400).json({ error: error.message });
