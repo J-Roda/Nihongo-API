@@ -39,7 +39,7 @@ router.get("/hiragana-combination", getCombinationHiragana);
 router.get("/katakana-combination", getCombinationKatakana);
 
 // get hiragana / katakana custom choice of user
-router.get("/kana-custom", getSpecificKana);
+router.post("/kana-custom", getSpecificKana);
 
 // Insert alphabet
 router.post("/create", insertAlphabet);
