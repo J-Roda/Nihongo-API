@@ -8,6 +8,7 @@ const app = express();
 const userRoutes = require("./routes/userRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const alphabetRoutes = require("./routes/alphabetRoutes");
+const gradesRoutes = require("./routes/gradesRoutes");
 
 // Middleware
 app.use(cors());
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/alphabet", alphabetRoutes);
+// app.use("/api/grades");
 
 mongoose.set({ strictQuery: true });
 mongoose

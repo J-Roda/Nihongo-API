@@ -26,8 +26,10 @@ const verify = (req, res, next) => {
 
         token = token.slice(7, token.length);
         return jwt.verify(token, secret, (error) => {
+            if (error.name === "TokenExpiredError")
+                return res.status(401).json({ error: "Token has expired" });
             if (error) {
-                return res.json("Invalid Token");
+                return res.status(401).json("Invalid Token");
             } else {
                 next();
             }
