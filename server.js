@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/alphabet", alphabetRoutes);
-// app.use("/api/grades");
+app.use("/api/grades", gradesRoutes);
 
 mongoose.set({ strictQuery: true });
 mongoose
