@@ -12,7 +12,7 @@ const createToken = (user) => {
         // isAdmin: user.isAdmin,
     };
     // Generate a JSON web token using the jwt's sign method
-    return jwt.sign(data, secret, { expiresIn: "1d" });
+    return jwt.sign(data, secret, { expiresIn: "3d" });
 };
 
 const verify = (req, res, next) => {
