@@ -75,30 +75,30 @@ alphabetSchema.statics.selectKana = async function (data) {
     const errorMode = lowerCaseMode
         .map((mode) => (defaultModes.includes(mode) ? true : mode))
         .filter((m) => m !== true)
-        .at(0);
+        .find((mode) => true);
 
     const errorGroup = lowerCaseGroup
         .map((group) => (defaultGroups.includes(group) ? true : group))
         .filter((g) => g !== true)
-        .at(0);
+        .find((mode) => true);
 
     // check if group entered is the right partner for mode: 'main'
     const errorMainGroup = lowerCaseGroup
         .map((mg) => (defaultMainGroup.includes(mg) ? true : mg))
         .filter((mg) => mg !== true)
-        .at(0);
+        .find((mode) => true);
 
     // check if group entered is the right partner for mode: 'main'
     const errorCombinationGroup = lowerCaseGroup
         .map((cg) => (defaultCombinationGroup.includes(cg) ? true : cg))
         .filter((cg) => cg !== true)
-        .at(0);
+        .find((mode) => true);
 
     // check if group entered is the right partner for mode: 'dakuten'
     const errorDakutenGroup = lowerCaseGroup
         .map((dg) => (defaultDakutenGroup.includes(dg) ? true : dg))
         .filter((dg) => dg !== true)
-        .at(0);
+        .find((mode) => true);
 
     // check if the inputted type has same values in the default types
     const acceptedTypes = defaultType.includes(lowerCaseType);
