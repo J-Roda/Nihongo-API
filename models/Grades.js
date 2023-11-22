@@ -9,8 +9,7 @@ const gradesSchema = new Schema({
         required: true,
     },
     questionId: {
-        type: Schema.Types.ObjectId,
-        ref: "Question",
+        type: String,
         required: true,
     },
     score: {

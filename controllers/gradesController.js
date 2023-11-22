@@ -16,7 +16,7 @@ const addGrades = async (req, res) => {
         }
 
         // Check if the question with the given questionId exists
-        const questionExists = await Question.exists({ _id: questionId });
+        const questionExists = await Grades.exists({ questionId: questionId });
         if (!questionExists) {
             return res.status(404).json({ error: "Question not found" });
         }

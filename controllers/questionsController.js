@@ -130,12 +130,15 @@ const getQuestionByLevelTypeSet = async (req, res) => {
         if (questions.length < 1)
             return res.status(404).json({ error: "Question not found!" });
 
-        // randomize the questions
-        for (let i = questions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [questions[i], questions[j]] = [questions[j], questions[i]];
+        // randomize the options per questions
+        for (let i = 0; i < questions.length; i++) {
+            questions[i].options = shuffleArray(questions[i].options);
         }
-        res.status(200).json(questions);
+
+        // randomize the questions
+        const randomizeQuestions = shuffleArray(questions);
+
+        res.status(200).json(randomizeQuestions);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -153,6 +156,15 @@ const createQuestions = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+// Helper function
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 module.exports = {
     getQuestions,
