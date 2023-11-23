@@ -65,11 +65,20 @@ const getSpicificGrades = async (req, res) => {
 
 const addGrades = async (req, res) => {
     try {
-        const { userId, questionId, score } = req.body;
+        const { userId, questionSetId, idPerQuestion, userAnswers, score } =
+            req.body;
 
         // Validate that required fields are provided
-        if (!userId || !questionId || !score) {
-            return res.status(400).json({ error: "Missing required fields" });
+        if (
+            !userId ||
+            !questionSetId ||
+            !score ||
+            !idPerQuestion ||
+            !userAnswers
+        ) {
+            return res
+                .status(400)
+                .json({ error: `Missing required fields: ${req.body}` });
         }
 
         // Check if the user with the given userId exists
@@ -77,16 +86,16 @@ const addGrades = async (req, res) => {
         if (!userExists) {
             return res.status(404).json({ error: "User not found" });
         }
-        // Check if this set is already graded with the given userId and questionId
-        const isGraded = await Grades.exists({ userId, questionId });
+        // Check if this set is already graded with the given userId and questionSetId
+        const isGraded = await Grades.exists({ userId, questionSetId });
         if (isGraded) {
             const updatedGrade = await Grades.findOneAndUpdate(
                 {
                     userId,
-                    questionId,
+                    questionSetId,
                 },
                 {
-                    $set: { score: score },
+                    $set: { score, idPerQuestion, userAnswers },
                 },
                 { new: true } // To return the modified document instead of the original
             );
@@ -96,7 +105,9 @@ const addGrades = async (req, res) => {
         // Create a new grade entry
         const newGrade = new Grades({
             userId,
-            questionId,
+            questionSetId,
+            idPerQuestion,
+            userAnswers,
             score,
         });
 

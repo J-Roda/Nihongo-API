@@ -8,8 +8,16 @@ const gradesSchema = new Schema({
         ref: "User",
         required: true,
     },
-    questionId: {
+    questionSetId: {
         type: String,
+        required: true,
+    },
+    idPerQuestion: {
+        type: Array,
+        required: true,
+    },
+    userAnswers: {
+        type: Array,
         required: true,
     },
     score: {

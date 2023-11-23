@@ -144,6 +144,26 @@ const getQuestionByLevelTypeSet = async (req, res) => {
     }
 };
 
+const getQuestionsByIds = async (req, res) => {
+    try {
+        const { idPerQuestion } = req.body;
+
+        if (idPerQuestion.length < 1)
+            return res
+                .status(400)
+                .json({ error: `Missing required fields: ${req.body}` });
+
+        const questions = await Questions.find({ _id: { $in: idPerQuestion } });
+
+        if (questions.length < 1)
+            return res.status(404).json({ error: "No questions found" });
+
+        res.status(200).json(questions);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 // create single or many questions
 const createQuestions = async (req, res) => {
     const questions = req.body;
@@ -171,5 +191,6 @@ module.exports = {
     getAllQuestions,
     getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
+    getQuestionsByIds,
     createQuestions,
 };
