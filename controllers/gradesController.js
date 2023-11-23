@@ -41,9 +41,9 @@ const getGrades = async (req, res) => {
 
 const getSpicificGrades = async (req, res) => {
     try {
-        const { userId, questionId } = req.body;
+        const { userId, questionSetId } = req.body;
 
-        if (!userId || !questionId)
+        if (!userId || !questionSetId)
             return res.status(400).json({
                 error: `Missing required fields: userId, questionId`,
             });
@@ -53,7 +53,7 @@ const getSpicificGrades = async (req, res) => {
         if (!userExists)
             return res.status(404).json({ error: "User not found" });
 
-        const grade = await Grades.findOne({ userId, questionId });
+        const grade = await Grades.findOne({ userId, questionSetId });
 
         if (!grade) return res.status(404).json({ error: "Grade not found" });
 
