@@ -69,23 +69,23 @@ const addGrades = async (req, res) => {
         const { userId, questionSetId, idPerQuestion, userAnswers, score } =
             req.body;
 
-        // We need to sort the idPerQuestion together with userAnswers so that it will be in synchronized
-        // in order to do that we need to combine first the 2 arrays
-        const combinedArray = idPerQuestion.map((questionId, index) => [
-            questionId,
-            userAnswers[index],
-        ]);
+        // // We need to sort the idPerQuestion together with userAnswers so that it will be in synchronized
+        // // in order to do that we need to combine first the 2 arrays
+        // const combinedArray = idPerQuestion.map((questionId, index) => [
+        //     questionId,
+        //     userAnswers[index],
+        // ]);
 
-        // Sort the 2D array based on the first column (questionIds)
-        // we need to sort the userAnswers together with questions because the API returns a sorted questions which is by questionId
-        const sortedArray = combinedArray.sort((a, b) =>
-            a[0].localeCompare(b[0])
-        );
+        // // Sort the 2D array based on the first column (questionIds)
+        // // we need to sort the userAnswers together with questions because the API returns a sorted questions which is by questionId
+        // const sortedArray = combinedArray.sort((a, b) =>
+        //     a[0].localeCompare(b[0])
+        // );
 
-        // Get back the userAnswers which are now sorted where every questions option, the userAnswers are one of them
-        const sortedUserAnswers = sortedArray.map(
-            ([questionId, userAnswer]) => userAnswer
-        );
+        // // Get back the userAnswers which are now sorted where every questions option, the userAnswers are one of them
+        // const sortedUserAnswers = sortedArray.map(
+        //     ([questionId, userAnswer]) => userAnswer
+        // );
 
         // Validate that required fields are provided
         if (
@@ -117,7 +117,7 @@ const addGrades = async (req, res) => {
                     $set: {
                         score,
                         idPerQuestion,
-                        userAnswers: sortedUserAnswers,
+                        userAnswers,
                     },
                 },
                 { new: true } // To return the modified document instead of the original
@@ -130,7 +130,7 @@ const addGrades = async (req, res) => {
             userId,
             questionSetId,
             idPerQuestion,
-            userAnswers: sortedUserAnswers,
+            userAnswers,
             score,
         });
 
