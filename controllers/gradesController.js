@@ -30,10 +30,28 @@ const getGrades = async (req, res) => {
 
         const grades = await Grades.find({ userId });
 
-        if (grades.length < 1)
-            return res.status(404).json({ error: "No grades found" });
+        let kanjiGrades, vocabGrades, grammarGrades;
+        if (grades.length > 0) {
+            kanjiGrades = grades
+                .map((kanji) => kanji.questionSetId.includes("kanji") && kanji)
+                .filter((kanji) => kanji);
 
-        res.status(200).json(grades);
+            vocabGrades = grades
+                .map((vocab) => vocab.questionSetId.includes("vocab") && vocab)
+                .filter((vocab) => vocab);
+
+            grammarGrades = grades
+                .map(
+                    (grammar) =>
+                        grammar.questionSetId.includes("grammar") && grammar
+                )
+                .filter((grammar) => grammar);
+        }
+        // I will just comment this out because if there is no grade it means that the this set is not graded yet so it will return empty object
+        // if (grades.length < 1)
+        //     return res.status(404).json({ error: "No grades found" });
+
+        res.status(200).json({ kanjiGrades, vocabGrades, grammarGrades });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -55,7 +73,7 @@ const getSpicificGrades = async (req, res) => {
 
         const grade = await Grades.findOne({ userId, questionSetId });
 
-        // I will just comment this out because if there is no grade it means that the this set is not graded yet so it will return nothing
+        // I will just comment this out because if there is no grade it means that the this set is not graded yet so it will return empty object
         // if (!grade) return res.status(404).json({ error: "Grade not found" });
 
         res.status(200).json(grade);

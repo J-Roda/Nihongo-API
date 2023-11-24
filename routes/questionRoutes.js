@@ -9,12 +9,15 @@ const {
     getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
     getQuestionsByIds,
+    getCountQuestionsByLevelTypeSet,
 } = require("../controllers/questionsController");
 
 // get all questions
 router.get("/all", getAllQuestions);
 
 router.get("/count-type-level", getQuestionCountByTypeLevel);
+
+router.get("/count-by-sets", getCountQuestionsByLevelTypeSet);
 
 router.post("/find-qn-by-ids", getQuestionsByIds);
 

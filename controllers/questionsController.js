@@ -163,6 +163,27 @@ const getQuestionsByIds = async (req, res) => {
     }
 };
 
+const getCountQuestionsByLevelTypeSet = async (req, res) => {
+    try {
+        const questions = await Questions.aggregate([
+            {
+                $group: {
+                    _id: {
+                        type: "$type",
+                        level: "$level",
+                        set: "$set",
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+
+        res.status(200).json(questions);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 // create single or many questions
 const createQuestions = async (req, res) => {
     const questions = req.body;
@@ -188,6 +209,7 @@ function shuffleArray(array) {
 module.exports = {
     getQuestions,
     getAllQuestions,
+    getCountQuestionsByLevelTypeSet,
     getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
     getQuestionsByIds,
