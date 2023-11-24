@@ -55,7 +55,8 @@ const getSpicificGrades = async (req, res) => {
 
         const grade = await Grades.findOne({ userId, questionSetId });
 
-        if (!grade) return res.status(404).json({ error: "Grade not found" });
+        // I will just comment this out because if there is no grade it means that the this set is not graded yet so it will return nothing
+        // if (!grade) return res.status(404).json({ error: "Grade not found" });
 
         res.status(200).json(grade);
     } catch (error) {
@@ -67,6 +68,24 @@ const addGrades = async (req, res) => {
     try {
         const { userId, questionSetId, idPerQuestion, userAnswers, score } =
             req.body;
+
+        // We need to sort the idPerQuestion together with userAnswers so that it will be in synchronized
+        // in order to do that we need to combine first the 2 arrays
+        const combinedArray = idPerQuestion.map((questionId, index) => [
+            questionId,
+            userAnswers[index],
+        ]);
+
+        // Sort the 2D array based on the first column (questionIds)
+        // we need to sort the userAnswers together with questions because the API returns a sorted questions which is by questionId
+        const sortedArray = combinedArray.sort((a, b) =>
+            a[0].localeCompare(b[0])
+        );
+
+        // Get back the userAnswers which are now sorted where every questions option, the userAnswers are one of them
+        const sortedUserAnswers = sortedArray.map(
+            ([questionId, userAnswer]) => userAnswer
+        );
 
         // Validate that required fields are provided
         if (
@@ -95,7 +114,11 @@ const addGrades = async (req, res) => {
                     questionSetId,
                 },
                 {
-                    $set: { score, idPerQuestion, userAnswers },
+                    $set: {
+                        score,
+                        idPerQuestion,
+                        userAnswers: sortedUserAnswers,
+                    },
                 },
                 { new: true } // To return the modified document instead of the original
             );
@@ -107,7 +130,7 @@ const addGrades = async (req, res) => {
             userId,
             questionSetId,
             idPerQuestion,
-            userAnswers,
+            userAnswers: sortedUserAnswers,
             score,
         });
 

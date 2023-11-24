@@ -147,7 +147,6 @@ const getQuestionByLevelTypeSet = async (req, res) => {
 const getQuestionsByIds = async (req, res) => {
     try {
         const { idPerQuestion } = req.body;
-
         if (idPerQuestion.length < 1)
             return res
                 .status(400)
@@ -158,7 +157,7 @@ const getQuestionsByIds = async (req, res) => {
         if (questions.length < 1)
             return res.status(404).json({ error: "No questions found" });
 
-        res.status(200).json(questions);
+        res.status(200).json({ questions });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
