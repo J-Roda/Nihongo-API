@@ -4,12 +4,15 @@ const {
     getAllGrades,
     getGrades,
     getSpicificGrades,
+    getTotalScoresAndItems,
 } = require("../controllers/gradesController");
 
 const router = express.Router();
 
 // Get all grades
 router.get("/all", getAllGrades);
+
+router.post("/scores-total", getTotalScoresAndItems);
 
 // Get all grades of specific user
 router.post("/user-grades", getGrades);

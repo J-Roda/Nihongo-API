@@ -1,5 +1,6 @@
 const Grades = require("../models/Grades");
 const User = require("../models/User");
+const { mongoose } = require("mongoose");
 
 const getAllGrades = async (req, res) => {
     try {
@@ -166,9 +167,52 @@ const addGrades = async (req, res) => {
     }
 };
 
+const getTotalScoresAndItems = async (req, res) => {
+    // set the userId back to ObjectId
+    const userId = new mongoose.Types.ObjectId(req.body.userId);
+    try {
+        if (!userId)
+            return res.status(400).json({ error: "userId is missing" });
+
+        const scoresAndNumOfItems = await Grades.aggregate([
+            {
+                $addFields: {
+                    truncatedQuestionSetId: {
+                        $substr: [
+                            "$questionSetId",
+                            0,
+                            { $subtract: [{ $strLenCP: "$questionSetId" }, 1] },
+                        ],
+                    },
+                },
+            },
+            {
+                $match: {
+                    userId,
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        userId: "$userId",
+                        questionSetId: "$truncatedQuestionSetId",
+                    },
+                    totalScore: { $sum: "$score" },
+                    totalItems: { $sum: { $size: "$idPerQuestion" } },
+                },
+            },
+        ]);
+
+        res.status(200).json(scoresAndNumOfItems);
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+};
+
 module.exports = {
     getAllGrades,
     getGrades,
     getSpicificGrades,
+    getTotalScoresAndItems,
     addGrades,
 };
