@@ -106,10 +106,11 @@ const addGrades = async (req, res) => {
         // );
 
         // Validate that required fields are provided
+
         if (
             !userId ||
             !questionSetId ||
-            !score ||
+            (score < 0 && !score) ||
             !idPerQuestion ||
             !userAnswers
         ) {
