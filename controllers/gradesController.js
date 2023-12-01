@@ -189,6 +189,7 @@ const getTotalScoresAndItems = async (req, res) => {
             {
                 $match: {
                     userId,
+                    truncatedQuestionSetId: { $not: { $regex: /\d$/ } }, // Exclude if the last character is a number
                 },
             },
             {
