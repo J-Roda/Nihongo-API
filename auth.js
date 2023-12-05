@@ -21,7 +21,7 @@ const verify = (req, res, next) => {
         // Validate the "token" using verify method, to decrypt the token using the secret code.
         if (!token) {
             return res
-                .status(401)
+                .status(403)
                 .json({ error: "Authentication failed! Please login first!" });
         }
 

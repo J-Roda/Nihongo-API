@@ -1,4 +1,4 @@
-const { decode } = require("jsonwebtoken");
+const { decode } = require("../auth");
 const Questions = require("../models/Questions");
 
 // get all questions
@@ -193,6 +193,7 @@ const createQuestions = async (req, res) => {
     // decode the token to know who has been logged in
     const userData = decode(token);
 
+    console.log(userData);
     try {
         if (userData.role !== "admin")
             return res
@@ -202,7 +203,7 @@ const createQuestions = async (req, res) => {
         if (questions.length < 1) throw Error("No question inputted");
 
         const insertedQuestions = await Questions.insertMany(questions);
-        res.status(200).json(insertedQuestions);
+        res.status(201).json(insertedQuestions);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
