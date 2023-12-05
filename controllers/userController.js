@@ -103,7 +103,7 @@ const deleteUser = async (req, res) => {
     const userData = decode(token);
 
     const { userId } = req.body;
-    console.log(userId);
+
     // Validate if user ID inputted is same as mongoDB format
     if (!mongoose.Types.ObjectId.isValid(userId))
         return res

@@ -1,3 +1,4 @@
+const { decode } = require("jsonwebtoken");
 const Questions = require("../models/Questions");
 
 // get all questions
@@ -186,8 +187,18 @@ const getCountQuestionsByLevelTypeSet = async (req, res) => {
 
 // create single or many questions
 const createQuestions = async (req, res) => {
+    const token = req.headers.authorization;
     const questions = req.body;
+
+    // decode the token to know who has been logged in
+    const userData = decode(token);
+
     try {
+        if (userData.role !== "admin")
+            return res
+                .status(401)
+                .json({ error: "Access Denied!, Admin users only!" });
+
         if (questions.length < 1) throw Error("No question inputted");
 
         const insertedQuestions = await Questions.insertMany(questions);

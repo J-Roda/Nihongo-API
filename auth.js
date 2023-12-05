@@ -19,9 +19,10 @@ const verify = (req, res, next) => {
     let token = req.headers.authorization;
     try {
         // Validate the "token" using verify method, to decrypt the token using the secret code.
-
         if (!token) {
-            return res.json("Authentication failed! Please login first!");
+            return res
+                .status(401)
+                .json({ error: "Authentication failed! Please login first!" });
         }
 
         token = token.slice(7, token.length);
@@ -29,14 +30,14 @@ const verify = (req, res, next) => {
             if (error && error.name === "TokenExpiredError")
                 return res.status(401).json({ error: "Token has expired" });
             if (error) {
-                return res.status(401).json("Invalid Token");
+                return res.status(401).json({ error: "Invalid Token" });
             } else {
                 next();
             }
         });
     } catch (error) {
         console.log(`Im in verify \n${error.message}`);
-        res.json(error.message);
+        res.status(400).json({ error: error.message });
     }
 };
 
