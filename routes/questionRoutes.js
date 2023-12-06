@@ -10,6 +10,7 @@ const {
     getQuestionByLevelTypeSet,
     getQuestionsByIds,
     getCountQuestionsByLevelTypeSet,
+    deleteQuestion,
 } = require("../controllers/questionsController");
 const { verify } = require("../auth");
 
@@ -21,6 +22,8 @@ router.get("/count-type-level", getQuestionCountByTypeLevel);
 router.get("/count-by-sets", getCountQuestionsByLevelTypeSet);
 
 router.post("/find-qn-by-ids", getQuestionsByIds);
+
+router.delete("/delete", verify, deleteQuestion);
 
 // create single or many questions
 router.post("/create", verify, createQuestions);

@@ -1,5 +1,7 @@
+const { json } = require("express");
 const { decode } = require("../auth");
 const Questions = require("../models/Questions");
+const Grades = require("../models/Grades");
 
 // get all questions
 const getAllQuestions = async (req, res) => {
@@ -190,7 +192,6 @@ const createQuestions = async (req, res) => {
     const token = req.headers.authorization;
     const { questions } = req.body;
 
-    console.log(questions);
     // decode the token to know who has been logged in
     const userData = decode(token);
     try {
@@ -201,12 +202,37 @@ const createQuestions = async (req, res) => {
 
         if (questions.length < 1) throw Error("No question inputted");
 
-        console.log("hello");
         const insertedQuestions = await Questions.insertMany(questions);
-        console.log(insertedQuestions);
-        res.status(201).json(insertedQuestions);
+        res.status(200).json(insertedQuestions);
     } catch (error) {
         res.status(400).json({ error: error.message });
+    }
+};
+
+const deleteQuestion = async (req, res) => {
+    const token = req.headers.authorization;
+    const { questionId } = req.body;
+
+    const userData = decode(token);
+
+    try {
+        if (userData.role !== "admin" && userData.role !== "teacher")
+            return res
+                .status(401)
+                .json({ error: "Access Denied! Admin or Teacher users only" });
+
+        const questionToBeDeleted = await Questions.findByIdAndDelete(
+            questionId
+        );
+
+        // const deleteScore = await Grades.
+
+        if (!questionToBeDeleted)
+            return res.status(404).json({ error: "Question not found!" });
+
+        res.status(200).json(questionToBeDeleted);
+    } catch (error) {
+        res.status(400).json({ error: error.messages });
     }
 };
 
@@ -226,5 +252,6 @@ module.exports = {
     getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
     getQuestionsByIds,
+    deleteQuestion,
     createQuestions,
 };
