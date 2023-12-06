@@ -188,12 +188,11 @@ const getCountQuestionsByLevelTypeSet = async (req, res) => {
 // create single or many questions
 const createQuestions = async (req, res) => {
     const token = req.headers.authorization;
-    const questions = req.body;
+    const { questions } = req.body;
 
+    console.log(questions);
     // decode the token to know who has been logged in
     const userData = decode(token);
-
-    console.log(userData);
     try {
         if (userData.role !== "admin")
             return res
@@ -202,7 +201,9 @@ const createQuestions = async (req, res) => {
 
         if (questions.length < 1) throw Error("No question inputted");
 
+        console.log("hello");
         const insertedQuestions = await Questions.insertMany(questions);
+        console.log(insertedQuestions);
         res.status(201).json(insertedQuestions);
     } catch (error) {
         res.status(400).json({ error: error.message });

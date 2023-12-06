@@ -32,7 +32,6 @@ const questionsSchema = new Schema({
     },
     questionTranslate: {
         type: String,
-        required: true,
     },
 });
 module.exports = mongoose.model("Questions", questionsSchema);

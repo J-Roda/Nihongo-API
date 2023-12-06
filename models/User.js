@@ -26,6 +26,14 @@ const userSchema = Schema({
 });
 
 userSchema.statics.signup = async function (data) {
+    // Check if the inputted data has a space
+    const hasSpace = Object.values(data).some((value) => value.includes(" "));
+
+    if (hasSpace)
+        throw Error(
+            "Inputted data has a space! Please double check inputted fields"
+        );
+
     // Lower case inputted data, default value of arr is [], k are the keys of object
     let lowerCaseData = Object.keys(data).reduce(
         (arr, k) => (
@@ -34,7 +42,7 @@ userSchema.statics.signup = async function (data) {
                 : (arr[k] = data[k]),
             arr
         ),
-        {}
+        []
     );
 
     const { username, email, password, confirmPassword } = lowerCaseData;
