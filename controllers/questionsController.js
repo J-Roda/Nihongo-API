@@ -6,6 +6,11 @@ const Grades = require("../models/Grades");
 // get all questions
 const getAllQuestions = async (req, res) => {
     try {
+        const questions = await Questions.find();
+
+        if (questions.length < 1)
+            return res.status(404).json({ error: "No Questions Found!" });
+
         const vocabQuestions = await Questions.find({ type: "vocab" });
         const grammarQuestions = await Questions.find({ type: "grammar" });
         const kanjiQuestions = await Questions.find({ type: "kanji" });
@@ -28,6 +33,7 @@ const getAllQuestions = async (req, res) => {
             vocabQuestions,
             grammarQuestions,
             kanjiQuestions,
+            questions,
         });
     } catch (error) {
         res.status(400).json({ error: error.message });

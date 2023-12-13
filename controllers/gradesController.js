@@ -210,10 +210,29 @@ const getTotalScoresAndItems = async (req, res) => {
     }
 };
 
+const deleteGradesByQuestionSetId = async (req, res) => {
+    const { questionSetId } = req.body;
+    try {
+        const deletedGrades = await Grades.deleteMany({
+            questionSetId,
+        });
+
+        if (deletedGrades.deletedCount < 1)
+            return res.status(404).json({
+                error: `No Grades Found with Question Set Id: '${questionSetId}'`,
+            });
+
+        res.status(200).json(deletedGrades);
+    } catch (error) {
+        res.status(400).json(error.message);
+    }
+};
+
 module.exports = {
     getAllGrades,
     getGrades,
     getSpicificGrades,
     getTotalScoresAndItems,
     addGrades,
+    deleteGradesByQuestionSetId,
 };

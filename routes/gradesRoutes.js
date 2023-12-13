@@ -1,10 +1,12 @@
 const express = require("express");
+
 const {
     addGrades,
     getAllGrades,
     getGrades,
     getSpicificGrades,
     getTotalScoresAndItems,
+    deleteGradesByQuestionSetId,
 } = require("../controllers/gradesController");
 
 const router = express.Router();
@@ -21,5 +23,7 @@ router.post("/user-grades", getGrades);
 router.post("/grade-by-set", getSpicificGrades);
 
 router.post("/add-grades", addGrades);
+
+router.delete("/delete-grades", deleteGradesByQuestionSetId);
 
 module.exports = router;

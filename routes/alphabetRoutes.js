@@ -10,6 +10,7 @@ const {
     getCombinationHiragana,
     getCombinationKatakana,
     getSpecificKana,
+    deleteAllAlphabets,
 } = require("../controllers/alphabetController");
 
 const router = express.Router();
@@ -43,5 +44,7 @@ router.post("/kana-custom", getSpecificKana);
 
 // Insert alphabet
 router.post("/create", insertAlphabet);
+
+router.delete("/delete", deleteAllAlphabets);
 
 module.exports = router;

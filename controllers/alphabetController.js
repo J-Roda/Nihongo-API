@@ -157,6 +157,16 @@ const insertAlphabet = async (req, res) => {
     }
 };
 
+const deleteAllAlphabets = async (req, res) => {
+    try {
+        const deletedAlphabet = await Alphabet.deleteMany();
+
+        res.status(200).json(deletedAlphabet);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 module.exports = {
     getAllHiragana,
     getAllKatakana,
@@ -168,4 +178,5 @@ module.exports = {
     getCombinationKatakana,
     getSpecificKana,
     insertAlphabet,
+    deleteAllAlphabets,
 };
