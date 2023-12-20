@@ -168,21 +168,27 @@ const addGrades = async (req, res) => {
 };
 
 const getTotalScoresAndItems = async (req, res) => {
-    // set the userId back to ObjectId
     const userId = new mongoose.Types.ObjectId(req.body.userId);
+
     try {
-        if (!userId)
+        if (!userId) {
             return res.status(400).json({ error: "userId is missing" });
+        }
 
         const scoresAndNumOfItems = await Grades.aggregate([
             {
                 $addFields: {
-                    truncatedQuestionSetId: {
-                        $substr: [
-                            "$questionSetId",
-                            0,
-                            { $subtract: [{ $strLenCP: "$questionSetId" }, 1] },
-                        ],
+                    level: {
+                        $regexFind: {
+                            input: "$questionSetId",
+                            regex: /^(\d+)/,
+                        },
+                    },
+                    type: {
+                        $regexFind: {
+                            input: "$questionSetId",
+                            regex: /([a-zA-Z]+)/,
+                        },
                     },
                 },
             },
@@ -196,10 +202,24 @@ const getTotalScoresAndItems = async (req, res) => {
                 $group: {
                     _id: {
                         userId: "$userId",
-                        questionSetId: "$truncatedQuestionSetId",
+                        questionSetId: {
+                            $concat: [
+                                "$level.match",
+                                "$type.match", // Assuming 'type' is composed of letters
+                            ],
+                        },
                     },
                     totalScore: { $sum: "$score" },
-                    totalItems: { $sum: { $size: "$idPerQuestion" } },
+                    totalItems: { $sum: { $size: "$userAnswers" } }, // Use $size to get the length of userAnswers
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    userId: "$_id.userId",
+                    questionSetId: "$_id.questionSetId",
+                    totalScore: 1,
+                    totalItems: 1,
                 },
             },
         ]);
