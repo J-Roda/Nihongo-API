@@ -178,15 +178,16 @@ const createQuestions = async (req, res) => {
     // decode the token to know who has been logged in
     const userData = decode(token);
     try {
-        if (userData.role !== "admin")
+        if (userData.role !== "admin" || userData.role !== "teacher")
             return res
                 .status(401)
-                .json({ error: "Access Denied!, Admin users only!" });
+                .json({ error: "Access Denied! Admin or Teacher users only" });
 
         if (questions.length < 1) throw Error("No question inputted");
 
-        const insertedQuestions = await Questions.insertMany(questions);
-        res.status(200).json(insertedQuestions);
+        await Questions.insertMany(questions);
+
+        res.status(200).json({ message: "Questions added successfully!" });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -208,14 +209,56 @@ const deleteQuestion = async (req, res) => {
             questionId
         );
 
-        // const deleteScore = await Grades.
-
         if (!questionToBeDeleted)
             return res.status(404).json({ error: "Question not found!" });
 
-        res.status(200).json(questionToBeDeleted);
+        res.status(200).json({ message: `Question deleted successfully!` });
     } catch (error) {
         res.status(400).json({ error: error.messages });
+    }
+};
+
+/** Need to delete the grade if the question has been answered because if the question has been deleted the idPerQuestion in grade is searching to questions and if not found it will return error  */
+// Delete Question and Grade
+const deleteQuestionAndGrades = async (req, res) => {
+    const token = req.headers.authorization;
+    const { questionId } = req.body;
+
+    const userData = decode(token);
+
+    try {
+        if (userData.role !== "admin" && userData.role !== "teacher") {
+            return res
+                .status(401)
+                .json({ error: "Access Denied! Admin or Teacher users only" });
+        }
+
+        // Delete the question
+        const questionToBeDeleted = await Questions.findByIdAndDelete(
+            questionId
+        );
+
+        if (!questionToBeDeleted) {
+            return res.status(404).json({ error: "Question not found!" });
+        }
+
+        // Check if questionId exists in any document's idPerQuestion array
+        const questionExistsInGrades = await Grades.findOne({
+            idPerQuestion: { $in: [questionId] },
+        });
+
+        // Delete grades associated with the questionSetId if it is exist only!
+        if (questionExistsInGrades) {
+            await Grades.deleteMany({
+                questionSetId: questionExistsInGrades.questionSetId,
+            });
+        }
+
+        res.status(200).json({
+            message: "Question and associated grades deleted successfully",
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 };
 
@@ -236,5 +279,6 @@ module.exports = {
     getQuestionByLevelTypeSet,
     getQuestionsByIds,
     deleteQuestion,
+    deleteQuestionAndGrades,
     createQuestions,
 };
