@@ -11,30 +11,7 @@ const getAllQuestions = async (req, res) => {
         if (questions.length < 1)
             return res.status(404).json({ error: "No Questions Found!" });
 
-        const vocabQuestions = await Questions.find({ type: "vocab" });
-        const grammarQuestions = await Questions.find({ type: "grammar" });
-        const kanjiQuestions = await Questions.find({ type: "kanji" });
-
-        if (vocabQuestions.length < 1)
-            return res
-                .status(404)
-                .json({ error: "No such vocab question exist!" });
-
-        if (grammarQuestions.length < 1)
-            return res
-                .status(404)
-                .json({ error: "No such vocab question exist!" });
-        if (kanjiQuestions.length < 1)
-            return res
-                .status(404)
-                .json({ error: "No such vocab question exist!" });
-
-        res.status(200).json({
-            vocabQuestions,
-            grammarQuestions,
-            kanjiQuestions,
-            questions,
-        });
+        res.status(200).json(questions);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -69,7 +46,7 @@ const getQuestionCountByTypeLevel = async (req, res) => {
                     _id: {
                         type: "$type",
                         level: "$level",
-                        set: "$set",
+                        set: { $toInt: "$set" }, // Convert "set" to numeric
                     },
                 },
             },
@@ -89,7 +66,7 @@ const getQuestionCountByTypeLevel = async (req, res) => {
                     _id: {
                         type: "$type",
                         level: "$level",
-                        set: "$set",
+                        set: { $toInt: "$set" }, // Convert "set" to numeric
                     },
                 },
             },
@@ -111,7 +88,7 @@ const getQuestionCountByTypeLevel = async (req, res) => {
                     _id: {
                         type: "$type",
                         level: "$level",
-                        set: "$set",
+                        set: { $toInt: "$set" }, // Convert "set" to numeric
                     },
                 },
             },
@@ -180,7 +157,7 @@ const getCountQuestionsByLevelTypeSet = async (req, res) => {
                     _id: {
                         type: "$type",
                         level: "$level",
-                        set: "$set",
+                        set: { $toInt: "$set" }, // Convert "set" to numeric,,
                     },
                     count: { $sum: 1 },
                 },
