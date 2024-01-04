@@ -30,7 +30,7 @@ router.post("/find-qn-by-ids", getQuestionsByIds);
 router.delete("/delete", verify, deleteQuestion);
 
 // Delete the question with id and grades that has this question Id
-router.post("/delete-question-grades", verify, deleteQuestionAndGrades);
+router.delete("/delete-question-grades", verify, deleteQuestionAndGrades);
 
 // create single or many questions
 router.post("/create", verify, createQuestions);
