@@ -4,7 +4,7 @@ const router = express.Router();
 
 const {
     createQuestions,
-    getQuestions,
+    getQuestionsByTypeLevel,
     getAllQuestions,
     getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
@@ -12,6 +12,8 @@ const {
     getCountQuestionsByLevelTypeSet,
     deleteQuestion,
     deleteQuestionAndGrades,
+    getQuestionByType,
+    updateQuestionById,
 } = require("../controllers/questionsController");
 const { verify } = require("../auth");
 
@@ -33,8 +35,12 @@ router.post("/delete-question-grades", verify, deleteQuestionAndGrades);
 // create single or many questions
 router.post("/create", verify, createQuestions);
 
+router.post("/get-by-type", getQuestionByType);
+
+router.post("/update", verify, updateQuestionById);
+
 // get questions depending on type and level
-router.get("/type=:type&level=:level", getQuestions);
+router.get("/type=:type&level=:level", getQuestionsByTypeLevel);
 
 // get questions by level, type, and set
 router.get("/n:level-:type-exercise-:set", getQuestionByLevelTypeSet);

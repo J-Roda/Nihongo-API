@@ -17,11 +17,29 @@ const getAllQuestions = async (req, res) => {
     }
 };
 // get questions depending on type and level
-const getQuestions = async (req, res) => {
+const getQuestionsByTypeLevel = async (req, res) => {
     const { type, level } = req.params;
 
     try {
+        if (!type || !level) throw Error("Type or Level is Empty!");
         const question = await Questions.find({ type: type, level: level });
+
+        if (question.length < 1)
+            return res.status(404).json({ error: "No such question exist!" });
+
+        res.status(200).json(question);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const getQuestionByType = async (req, res) => {
+    const { type } = req.params;
+
+    try {
+        if (!type) throw Error("Type is empty!");
+
+        const question = await Questions.find({ type: type });
 
         if (question.length < 1)
             return res.status(404).json({ error: "No such question exist!" });
@@ -162,6 +180,7 @@ const getCountQuestionsByLevelTypeSet = async (req, res) => {
                     count: { $sum: 1 },
                 },
             },
+            { $sort: { _id: 1 } },
         ]);
 
         res.status(200).json(questions);
@@ -177,8 +196,9 @@ const createQuestions = async (req, res) => {
 
     // decode the token to know who has been logged in
     const userData = decode(token);
+
     try {
-        if (userData.role !== "admin" || userData.role !== "teacher")
+        if (userData.role !== "admin" && userData.role !== "teacher")
             return res
                 .status(401)
                 .json({ error: "Access Denied! Admin or Teacher users only" });
@@ -262,6 +282,59 @@ const deleteQuestionAndGrades = async (req, res) => {
     }
 };
 
+const updateQuestionById = async (req, res) => {
+    const token = req.headers.authorization;
+    const userData = decode(token);
+
+    const {
+        questionId,
+        question,
+        options,
+        type,
+        level,
+        set,
+        answer,
+        optionsTranslate,
+        questionTranslate,
+    } = req.body;
+
+    try {
+        if (userData.role !== "admin" && userData.role !== "teacher")
+            return res.status(401).json({
+                error: "Access Denied!, Admin and Teacher users only!",
+            });
+
+        const optionsContainsEmptyString = options.includes("");
+        if (!question) throw new Error("Question must not be empty field!");
+
+        if (optionsContainsEmptyString)
+            throw new Error("Options must not include empty string");
+
+        if (!type) throw new Error("Type must not be empty field!");
+        if (!level) throw new Error("Level must not be empty field!");
+        if (!set) throw new Error("Set must not be empty fields!");
+        if (!answer) throw new Error("Answer must not be empty fields!");
+
+        const updatedQuestion = await Questions.findByIdAndUpdate(questionId, {
+            question,
+            options,
+            type,
+            level,
+            set,
+            answer,
+            optionsTranslate,
+            questionTranslate,
+        });
+
+        if (!updatedQuestion)
+            return res.status(404).json({ error: "No such questions exist!" });
+
+        res.status(200).json({ message: "Question updated successfully!" });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 // Helper function
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -272,8 +345,9 @@ function shuffleArray(array) {
 }
 
 module.exports = {
-    getQuestions,
+    getQuestionsByTypeLevel,
     getAllQuestions,
+    getQuestionByType,
     getCountQuestionsByLevelTypeSet,
     getQuestionCountByTypeLevel,
     getQuestionByLevelTypeSet,
@@ -281,4 +355,5 @@ module.exports = {
     deleteQuestion,
     deleteQuestionAndGrades,
     createQuestions,
+    updateQuestionById,
 };

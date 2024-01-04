@@ -29,7 +29,7 @@ const getGrades = async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const grades = await Grades.find({ userId });
+        const grades = await Grades.find({ userId }).sort({ questionSetId: 1 });
 
         let kanjiGrades, vocabGrades, grammarGrades;
         if (grades.length > 0) {
@@ -52,7 +52,12 @@ const getGrades = async (req, res) => {
         // if (grades.length < 1)
         //     return res.status(404).json({ error: "No grades found" });
 
-        res.status(200).json({ kanjiGrades, vocabGrades, grammarGrades });
+        res.status(200).json({
+            kanjiGrades,
+            vocabGrades,
+            grammarGrades,
+            grades,
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -157,12 +162,10 @@ const addGrades = async (req, res) => {
         // Save the new grade entry to the database
         await newGrade.save();
 
-        return res
-            .status(201)
-            .json({ success: true, message: "Grade added successfully" });
+        return res.status(201).json({ message: "Score added successfully" });
     } catch (error) {
         res.status(400).json({
-            error: `Error adding grades: ${error.message}`,
+            error: `${error.message}`,
         });
     }
 };
